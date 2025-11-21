@@ -1,4 +1,4 @@
-import { Component, input, output, ViewEncapsulation } from '@angular/core';
+import { Component, input, output, OnInit, OnDestroy, OnChanges, ViewEncapsulation, SimpleChanges } from '@angular/core';
 import { Product } from '../product';
 
 @Component({
@@ -8,9 +8,32 @@ import { Product } from '../product';
   styleUrl: './product-detail.component.css',
   encapsulation: ViewEncapsulation.None
 })
-export class ProductDetailComponent {
+export class ProductDetailComponent implements OnInit, OnDestroy {
   product = input<Product>();
   added = output<Product>();
+
+  constructor() {
+    console.log('Product:', this.product());
+  }
+
+  ngOnInit(): void {
+    console.log('Product:', this.product());
+  }
+
+  ngOnDestroy(): void {
+    console.log('Destroying Product Detail Component');
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const product = changes['product'];
+    if (!product.isFirstChange) {
+      const oldValue = product.previousValue;
+      const newValue = product.currentValue;
+
+      console.log(`Product changed from ${oldValue.title} to ${newValue.title}`);
+    }
+
+  }
 
   addToCart() {
     this.added.emit(this.product()!);
